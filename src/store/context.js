@@ -41,7 +41,7 @@ export const StoreProvider = ({children}) => {
     const filtered = data.filter(item => item.id !== chicken.id);
 
     await AsyncStorage.setItem('formData', JSON.stringify(filtered));
-    console.log('removed');
+    console.log('remove');
   };
 
   const value = {saveData, formData, getData, removeChicken};
