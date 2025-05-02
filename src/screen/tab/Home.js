@@ -14,7 +14,7 @@ import {useStore} from '../../store/context';
 
 const Home = () => {
   const {getData, formData, removeChicken} = useStore();
-  const [reset, setReset] = useState(false);
+
   const navigation = useNavigation();
   const isFocused = useIsFocused();
 
@@ -69,7 +69,11 @@ const Home = () => {
                 <Swipeable
                   renderRightActions={() => renderRightActions(item.id)}
                   key={item.id}>
-                  <View style={styles.itemContainer} key={item.id}>
+                  <TouchableOpacity
+                    activeOpacity={0.9}
+                    onPress={() => navigation.navigate('ChickenCard', item)}
+                    style={styles.itemContainer}
+                    key={item.id}>
                     <View style={{flexDirection: 'row', alignItems: 'center'}}>
                       <Image
                         source={{uri: item.image}}
@@ -77,7 +81,7 @@ const Home = () => {
                       />
                       <Text style={styles.itemText}>{item.name}</Text>
                     </View>
-                  </View>
+                  </TouchableOpacity>
                 </Swipeable>
               ))}
             </View>
@@ -92,6 +96,18 @@ const Home = () => {
             </View>
           </View>
         )}
+        <View style={{marginHorizontal: 20}}>
+          <View style={styles.totalEarnedContainer}>
+            <Text style={styles.earnedText}>Total earned</Text>
+            <Text style={styles.quantityText}> $1000</Text>
+          </View>
+          <TouchableOpacity
+            activeOpacity={0.7}
+            style={styles.addSalesBtn}
+            onPress={() => navigation.navigate('AddSale')}>
+            <Image source={require('../../assets/icons/add.png')} />
+          </TouchableOpacity>
+        </View>
       </ScrollView>
     </Layout>
   );
@@ -125,9 +141,11 @@ const styles = StyleSheet.create({
   },
   itemText: {
     fontSize: 18,
-    color: '#333',
+    fontWeight: '700',
     marginLeft: 16,
   },
+  earnedText: {fontSize: 18, color: '#fff', fontWeight: '500', opacity: 0.7},
+  quantityText: {fontSize: 40, color: '#fff', fontWeight: '500'},
   deleteButton: {
     backgroundColor: 'red',
     justifyContent: 'center',
@@ -152,6 +170,17 @@ const styles = StyleSheet.create({
     bottom: 65,
     right: 20,
   },
+  addSalesBtn: {
+    width: 74,
+    height: 74,
+    borderRadius: 99,
+    backgroundColor: '#fff',
+    justifyContent: 'center',
+    alignItems: 'center',
+    position: 'absolute',
+    right: 0,
+    bottom: -90,
+  },
   addBtnEmpty: {
     width: 74,
     height: 74,
@@ -160,6 +189,17 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: 40,
+  },
+  totalEarnedContainer: {
+    width: '100%',
+    paddingVertical: 40,
+    paddingHorizontal: 20,
+    backgroundColor: '#9C043C',
+    borderRadius: 30,
+    marginTop: 20,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
   },
 });
 

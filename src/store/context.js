@@ -1,5 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {createContext, useContext, useState} from 'react';
+import {createContext, useContext, useEffect, useState} from 'react';
 
 export const StoreContext = createContext();
 
@@ -38,13 +38,30 @@ export const StoreProvider = ({children}) => {
   const removeChicken = async chicken => {
     const jsonValue = await AsyncStorage.getItem('formData');
     let data = jsonValue != null ? JSON.parse(jsonValue) : [];
-    const filtered = data.filter(item => item.id !== chicken.id);
-
+    const filtered = data.filter(item => item.id !== chicken);
+    console.log('removedChick', filtered);
+    setFormData(filtered);
     await AsyncStorage.setItem('formData', JSON.stringify(filtered));
+
     console.log('remove');
   };
 
-  const value = {saveData, formData, getData, removeChicken};
+  //--------------sales--------------->
+
+  const saveSales = async sale => {
+    try {
+      const value = await AsyncStorage.getItem('sales');
+      let parced = value !== null ? JSON.parse(value) : [];
+
+      const sales = [...parced, sale];
+      await AsyncStorage.setItem('sales', JSON.stringify(sales));
+      console.log('sales', sales);
+    } catch (e) {
+      console.error('Failed', e);
+    }
+  };
+
+  const value = {saveData, formData, getData, removeChicken, saveSales};
 
   return (
     <StoreContext.Provider value={value}>{children}</StoreContext.Provider>

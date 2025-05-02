@@ -12,9 +12,10 @@ import {useState} from 'react';
 import {useNavigation} from '@react-navigation/native';
 import {launchImageLibrary} from 'react-native-image-picker';
 import {useStore} from '../../store/context';
+import uuid from 'react-native-uuid';
 
 const formData = {
-  id: Date.now(),
+  id: uuid.v4(),
   name: '',
   breed: '',
   age: '',
@@ -32,9 +33,9 @@ const AddChicken = () => {
   const [currentStep, setCurrentStep] = useState(1);
   const [changePhoto, setChangePhoto] = useState(false);
   const navigation = useNavigation();
-  const {saveData, getData} = useStore();
+  const {saveData} = useStore();
 
-  console.log('state', state);
+  console.log(state);
 
   let options = {
     storageOptions: {
@@ -59,7 +60,7 @@ const AddChicken = () => {
     }
     if (currentStep === 4) {
       //   saveData(state);
-      navigation.navigate('Home');
+      navigation.navigate('TabNavigation');
     } else {
       setCurrentStep(currentStep + 1);
     }
