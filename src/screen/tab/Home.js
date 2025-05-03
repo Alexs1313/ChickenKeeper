@@ -11,30 +11,40 @@ import {Swipeable} from 'react-native-gesture-handler';
 import Layout from '../../components/Layout';
 import {useIsFocused, useNavigation} from '@react-navigation/native';
 import {useStore} from '../../store/context';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Home = () => {
-  const {getData, formData, removeChicken} = useStore();
+  const {getData, formData, removeChicken, sales, getSales, removeSale} =
+    useStore();
 
   const navigation = useNavigation();
   const isFocused = useIsFocused();
 
-  console.log('formdata', formData);
+  // console.log('sales', sales);
 
   useEffect(() => {
     getData();
+    getSales();
+    // AsyncStorage.clear();
   }, [isFocused]);
-
-  // const handleDelete = id => {
-  //   setData(prevData => prevData.filter(item => item.id !== id));
-  // };
 
   const emptyData = formData.length === 0;
 
-  const renderRightActions = itemId => (
+  const deleteChicken = itemId => (
     <View style={{justifyContent: 'center'}}>
       <TouchableOpacity
         style={styles.deleteButton}
         onPress={() => removeChicken(itemId)}>
+        <Image source={require('../../assets/icons/delete.png')} />
+      </TouchableOpacity>
+    </View>
+  );
+
+  const deleteSale = itemId => (
+    <View style={{justifyContent: 'center'}}>
+      <TouchableOpacity
+        style={styles.deleteButton}
+        onPress={() => removeSale(itemId)}>
         <Image source={require('../../assets/icons/delete.png')} />
       </TouchableOpacity>
     </View>
@@ -67,7 +77,7 @@ const Home = () => {
             <View style={styles.listContainer}>
               {formData.map(item => (
                 <Swipeable
-                  renderRightActions={() => renderRightActions(item.id)}
+                  renderRightActions={() => deleteChicken(item.id)}
                   key={item.id}>
                   <TouchableOpacity
                     activeOpacity={0.9}
@@ -96,18 +106,48 @@ const Home = () => {
             </View>
           </View>
         )}
-        <View style={{marginHorizontal: 20}}>
-          <View style={styles.totalEarnedContainer}>
-            <Text style={styles.earnedText}>Total earned</Text>
-            <Text style={styles.quantityText}> $1000</Text>
+        {emptyData && (
+          <View style={{marginHorizontal: 20, marginBottom: 200}}>
+            <View style={styles.totalEarnedContainer}>
+              <Text style={styles.earnedText}>Total earned</Text>
+              <Text style={styles.quantityText}> $1000</Text>
+            </View>
+
+            <View style={[styles.listContainer, {paddingHorizontal: 0}]}>
+              {sales.map(item => (
+                <Swipeable
+                  renderRightActions={() => deleteSale(item.id)}
+                  key={item.id}>
+                  <TouchableOpacity
+                    key={item.id}
+                    activeOpacity={0.9}
+                    onPress={() => navigation.navigate('SalesCard', item)}
+                    style={styles.itemContainer}>
+                    <View
+                      style={{
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                      }}>
+                      <Text style={styles.itemText}>{item.type}</Text>
+                      <Text style={styles.priceText}>
+                        $ {item.quantity * item.price}
+                      </Text>
+                    </View>
+                    <Text style={styles.salesDateText}>{item.salesDate}</Text>
+                  </TouchableOpacity>
+                </Swipeable>
+              ))}
+            </View>
+
+            <TouchableOpacity
+              activeOpacity={0.7}
+              style={styles.addSalesBtn}
+              onPress={() => navigation.navigate('AddSale')}>
+              <Image source={require('../../assets/icons/add.png')} />
+            </TouchableOpacity>
           </View>
-          <TouchableOpacity
-            activeOpacity={0.7}
-            style={styles.addSalesBtn}
-            onPress={() => navigation.navigate('AddSale')}>
-            <Image source={require('../../assets/icons/add.png')} />
-          </TouchableOpacity>
-        </View>
+        )}
       </ScrollView>
     </Layout>
   );
@@ -143,6 +183,15 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: '700',
     marginLeft: 16,
+  },
+  priceText: {fontSize: 17, fontWeight: '800', color: '#9C043C'},
+  salesDateText: {
+    fontSize: 11,
+    color: '#000000',
+    fontWeight: '700',
+    opacity: 0.7,
+    marginLeft: 16,
+    marginTop: 15,
   },
   earnedText: {fontSize: 18, color: '#fff', fontWeight: '500', opacity: 0.7},
   quantityText: {fontSize: 40, color: '#fff', fontWeight: '500'},

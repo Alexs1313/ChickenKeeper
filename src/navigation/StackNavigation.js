@@ -6,6 +6,7 @@ import Welcome from '../screen/stack/Welcome';
 import Home from '../screen/tab/Home';
 import ChickenCard from '../components/ChickenCard';
 import AddSale from '../screen/stack/AddSale';
+import SalesCard from '../components/SalesCard';
 
 const Stack = createStackNavigator();
 
@@ -18,6 +19,7 @@ const StackNavigation = () => {
       <Stack.Screen name="Home" component={Home} />
       <Stack.Screen name="ChickenCard" component={ChickenCard} />
       <Stack.Screen name="AddSale" component={AddSale} />
+      <Stack.Screen name="SalesCard" component={SalesCard} />
     </Stack.Navigator>
   );
 };

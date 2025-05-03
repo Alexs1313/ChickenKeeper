@@ -14,22 +14,20 @@ import {launchImageLibrary} from 'react-native-image-picker';
 import {useStore} from '../../store/context';
 import uuid from 'react-native-uuid';
 
-const formData = {
-  id: uuid.v4(),
-  name: '',
-  breed: '',
-  age: '',
-  image: '',
-  eggs: '',
-  eggsDate: '',
-  eventType: '',
-  eventDate: '',
-  additionalComments: '',
-  notes: '',
-};
-
 const AddChicken = () => {
-  const [state, setState] = useState(formData);
+  const [state, setState] = useState({
+    id: uuid.v4(),
+    name: '',
+    breed: '',
+    age: '',
+    image: '',
+    eggs: '',
+    eggsDate: '',
+    eventType: '',
+    eventDate: '',
+    additionalComments: '',
+    notes: '',
+  });
   const [currentStep, setCurrentStep] = useState(1);
   const [changePhoto, setChangePhoto] = useState(false);
   const navigation = useNavigation();

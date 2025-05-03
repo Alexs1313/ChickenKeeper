@@ -9,6 +9,7 @@ export const useStore = () => {
 
 export const StoreProvider = ({children}) => {
   const [formData, setFormData] = useState([]);
+  const [sales, setSales] = useState([]);
 
   const saveData = async data => {
     try {
@@ -61,7 +62,40 @@ export const StoreProvider = ({children}) => {
     }
   };
 
-  const value = {saveData, formData, getData, removeChicken, saveSales};
+  const getSales = async () => {
+    try {
+      const savedData = await AsyncStorage.getItem('sales');
+      const parsed = JSON.parse(savedData);
+
+      if (parsed != null) {
+        setSales(parsed);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const removeSale = async sale => {
+    const jsonValue = await AsyncStorage.getItem('sales');
+    let data = jsonValue != null ? JSON.parse(jsonValue) : [];
+    const filtered = data.filter(item => item.id !== sale);
+    console.log('removed', filtered);
+    setSales(filtered);
+    await AsyncStorage.setItem('sales', JSON.stringify(filtered));
+
+    console.log('remove');
+  };
+
+  const value = {
+    saveData,
+    formData,
+    getData,
+    removeChicken,
+    saveSales,
+    getSales,
+    removeSale,
+    sales,
+  };
 
   return (
     <StoreContext.Provider value={value}>{children}</StoreContext.Provider>

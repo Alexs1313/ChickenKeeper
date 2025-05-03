@@ -10,27 +10,30 @@ import {
 import Layout from '../../components/Layout';
 import {useState} from 'react';
 import {useNavigation} from '@react-navigation/native';
-import {launchImageLibrary} from 'react-native-image-picker';
+
 import {useStore} from '../../store/context';
 import uuid from 'react-native-uuid';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-
-const sales = {
-  id: uuid.v4(),
-  salesDate: '',
-  quantity: '',
-  price: '',
-  type: '',
-};
+import {Calendar} from 'react-native-calendars';
+import CustomModal from '../../components/CustomModal';
 
 const AddSale = () => {
-  const [state, setState] = useState(sales);
+  const [state, setState] = useState({
+    id: Date.now(),
+    salesDate: '',
+    quantity: '',
+    price: '',
+    type: '',
+  });
   const [currentStep, setCurrentStep] = useState(1);
+  const [selectedDate, setSelectedDate] = useState('');
+  const [toggleCalendar, setToggleCalendar] = useState(false);
+
+  console.log('selectedDate', selectedDate);
 
   const navigation = useNavigation();
-  const {saveData, saveSales} = useStore();
+  const {saveSales} = useStore();
 
-  console.log(state);
+  console.log('state', state);
 
   const handleNextStep = () => {
     // if (currentStep === 3) {
@@ -43,6 +46,10 @@ const AddSale = () => {
     //   setCurrentStep(currentStep + 1);
     // }
     saveSales(state);
+
+    setTimeout(() => {
+      navigation.navigate('TabNavigation');
+    }, 200);
   };
 
   const handlePreviousStep = () => {
@@ -52,11 +59,11 @@ const AddSale = () => {
     if (currentStep > 1) setCurrentStep(currentStep - 1);
   };
 
-  const isDisabled1 =
-    state.name === '' ||
-    state.breed === '' ||
-    state.age === '' ||
-    state.image === '';
+  const isDisabled =
+    state.salesDate === '' ||
+    state.quantity === '' ||
+    state.price === '' ||
+    state.type === '';
 
   return (
     <Layout>
@@ -71,12 +78,13 @@ const AddSale = () => {
             </TouchableOpacity>
             <Text style={styles.headerText}>Add sales</Text>
             <TouchableOpacity
+              disabled={isDisabled}
               onPress={() => handleNextStep()}
               style={styles.headerBtn}
               activeOpacity={0.7}>
               <Image
                 source={require('../../assets/icons/checked.png')}
-                // tintColor={isDisabled2 ? '#a9a9a9' : '#000'}
+                tintColor={isDisabled ? '#a9a9a9' : '#000'}
               />
             </TouchableOpacity>
           </View>
@@ -85,13 +93,14 @@ const AddSale = () => {
             <View>
               <TextInput
                 style={[styles.input, {paddingLeft: 55}]}
-                value={state.salesDate}
+                value={selectedDate}
+                onFocus={() => setToggleCalendar(true)}
                 inputMode="numeric"
                 placeholder="Sales Date"
                 placeholderTextColor="rgba(60, 60, 67, 0.6)"
-                onChangeText={value =>
-                  setState(prev => ({...prev, salesDate: value}))
-                }
+                // onChangeText={value =>
+                //   setState(prev => ({...prev, salesDate: value}))
+                // }
               />
               <TextInput
                 style={styles.input}
@@ -124,16 +133,73 @@ const AddSale = () => {
             <Text style={styles.sectionText}>Product type</Text>
 
             <TouchableOpacity
-              onPress={() => setState(prev => ({...prev, type: 'Eggs'}))}
+              onPress={() =>
+                setState(prev => ({
+                  ...prev,
+                  type: 'Eggs',
+                  salesDate: selectedDate,
+                }))
+              }
               activeOpacity={0.7}
-              style={styles.selectTypeContainer}>
+              style={[
+                styles.selectTypeContainer,
+                state.type === 'Eggs' && {
+                  borderWidth: 7,
+                  borderColor: '#9C043C',
+                },
+              ]}>
               <Text style={styles.selectTypeText}>Eggs</Text>
             </TouchableOpacity>
-            <View style={styles.selectTypeContainer}>
+            <TouchableOpacity
+              onPress={() =>
+                setState(prev => ({
+                  ...prev,
+                  type: 'Chickens',
+                  salesDate: selectedDate,
+                }))
+              }
+              style={[
+                styles.selectTypeContainer,
+                state.type === 'Chickens' && {
+                  borderWidth: 7,
+                  borderColor: '#9C043C',
+                },
+              ]}>
               <Text style={styles.selectTypeText}>Chickens</Text>
-            </View>
+            </TouchableOpacity>
           </View>
         </View>
+        {toggleCalendar && (
+          <CustomModal>
+            <Calendar
+              monthFormat="MMMM yyyy"
+              showSixWeeks={true}
+              // hideArrows={true}
+              hideExtraDays={true}
+              theme={{
+                calendarBackground: 'transparent',
+                textSectionTitleColor: '#ffffff',
+                selectedDayTextColor: '#ffffff',
+                todayTextColor: '#FFC20E',
+                textDisabledColor: '#dd99ee',
+                arrowColor: '#fff',
+                indicatorColor: '#fff',
+                dayTextColor: '#fff',
+                monthTextColor: 'rgba(255, 255, 255, 0.5)',
+                textMonthFontSize: 16,
+                textMonthFontWeight: '700',
+                textDayFontSize: 13,
+                textDayFontWeight: '600',
+                selectedDayBackgroundColor: '#FFC20E',
+                selectedDayTextColor: 'rgba(255, 195, 14, 0.26)',
+              }}
+              onDayPress={day => {
+                setSelectedDate(day.dateString);
+                setToggleCalendar(false);
+              }}
+            />
+          </CustomModal>
+        )}
       </ScrollView>
     </Layout>
   );
