@@ -13,6 +13,8 @@ import {useNavigation} from '@react-navigation/native';
 import {launchImageLibrary} from 'react-native-image-picker';
 import {useStore} from '../../store/context';
 import uuid from 'react-native-uuid';
+import {Calendar} from 'react-native-calendars';
+import CustomModal from '../../components/CustomModal';
 
 const AddChicken = () => {
   const [state, setState] = useState({
@@ -30,10 +32,14 @@ const AddChicken = () => {
   });
   const [currentStep, setCurrentStep] = useState(1);
   const [changePhoto, setChangePhoto] = useState(false);
+  const [selectedDate, setSelectedDate] = useState('');
+  const [selectedEventDate, setSelectedEventDate] = useState('');
+  const [toggleCalendar, setToggleCalendar] = useState(false);
+
   const navigation = useNavigation();
   const {saveData} = useStore();
 
-  console.log(state);
+  console.log('state', state);
 
   let options = {
     storageOptions: {
@@ -54,13 +60,21 @@ const AddChicken = () => {
 
   const handleNextStep = () => {
     if (currentStep === 3) {
-      saveData(state);
+      // saveData(state);
     }
     if (currentStep === 4) {
-      //   saveData(state);
-      navigation.navigate('TabNavigation');
+      saveData(state);
+      setSelectedDate(''), setSelectedEventDate('');
+      setTimeout(() => {
+        navigation.navigate('TabNavigation');
+      }, 200);
     } else {
       setCurrentStep(currentStep + 1);
+      setState(prev => ({
+        ...prev,
+        eggsDate: selectedDate,
+        eventDate: selectedEventDate,
+      }));
     }
   };
 
@@ -77,11 +91,11 @@ const AddChicken = () => {
     state.age === '' ||
     state.image === '';
 
-  const isDisabled2 = state.eggs === '' || state.eggsDate === '';
+  const isDisabled2 = state.eggs === '' || selectedDate === '';
 
   const isDisabled3 =
     state.eventType === '' ||
-    state.eventDate === '' ||
+    selectedEventDate === '' ||
     state.additionalComments === '';
 
   return (
@@ -135,6 +149,7 @@ const AddChicken = () => {
               <TextInput
                 style={styles.input}
                 value={state.name}
+                maxLength={20}
                 placeholder="Name"
                 placeholderTextColor="rgba(60, 60, 67, 0.6)"
                 onChangeText={value =>
@@ -144,6 +159,7 @@ const AddChicken = () => {
               <TextInput
                 style={styles.input}
                 value={state.breed}
+                maxLength={20}
                 placeholder="Breed"
                 placeholderTextColor="rgba(60, 60, 67, 0.6)"
                 onChangeText={value =>
@@ -154,6 +170,7 @@ const AddChicken = () => {
                 style={styles.input}
                 value={state.age}
                 inputMode="numeric"
+                maxLength={20}
                 placeholder="Age"
                 placeholderTextColor="rgba(60, 60, 67, 0.6)"
                 onChangeText={value =>
@@ -192,6 +209,7 @@ const AddChicken = () => {
               <TextInput
                 style={styles.input}
                 value={state.eggs}
+                maxLength={20}
                 placeholder="Number of Eggs Laid"
                 placeholderTextColor="rgba(60, 60, 67, 0.6)"
                 onChangeText={value =>
@@ -201,8 +219,9 @@ const AddChicken = () => {
               <View>
                 <TextInput
                   style={[styles.input, {paddingLeft: 55}]}
-                  value={state.eggsDate}
+                  value={selectedDate}
                   inputMode="numeric"
+                  onFocus={() => setToggleCalendar(true)}
                   placeholder="Egg Collection Date"
                   placeholderTextColor="rgba(60, 60, 67, 0.6)"
                   onChangeText={value =>
@@ -246,6 +265,7 @@ const AddChicken = () => {
               <TextInput
                 style={styles.input}
                 value={state.eventType}
+                maxLength={20}
                 placeholder="Event Type"
                 placeholderTextColor="rgba(60, 60, 67, 0.6)"
                 onChangeText={value =>
@@ -255,8 +275,9 @@ const AddChicken = () => {
               <View>
                 <TextInput
                   style={[styles.input, {paddingLeft: 55}]}
-                  value={state.eventDate}
+                  value={selectedEventDate}
                   placeholder="Event Date"
+                  onFocus={() => setToggleCalendar(true)}
                   inputMode="numeric"
                   placeholderTextColor="rgba(60, 60, 67, 0.6)"
                   onChangeText={value =>
@@ -269,6 +290,7 @@ const AddChicken = () => {
                 />
                 <TextInput
                   textAlignVertical="top"
+                  maxLength={20}
                   style={[
                     styles.input,
                     {height: 115, paddingTop: 20, borderRadius: 40},
@@ -317,6 +339,7 @@ const AddChicken = () => {
                   {height: 115, paddingTop: 20, borderRadius: 40},
                 ]}
                 value={state.notes}
+                maxLength={40}
                 placeholder="Notes "
                 placeholderTextColor="rgba(60, 60, 67, 0.6)"
                 onChangeText={value =>
@@ -325,6 +348,40 @@ const AddChicken = () => {
               />
             </View>
           </View>
+        )}
+        {toggleCalendar && (
+          <CustomModal>
+            <Calendar
+              monthFormat="MMMM yyyy"
+              showSixWeeks={true}
+              // hideArrows={true}
+              hideExtraDays={true}
+              theme={{
+                calendarBackground: 'transparent',
+                textSectionTitleColor: '#ffffff',
+                selectedDayTextColor: '#ffffff',
+                todayTextColor: '#FFC20E',
+                textDisabledColor: '#dd99ee',
+                arrowColor: '#fff',
+                indicatorColor: '#fff',
+                dayTextColor: '#fff',
+                monthTextColor: 'rgba(255, 255, 255, 0.5)',
+                textMonthFontSize: 16,
+                textMonthFontWeight: '700',
+                textDayFontSize: 13,
+                textDayFontWeight: '600',
+                selectedDayBackgroundColor: '#FFC20E',
+                selectedDayTextColor: 'rgba(255, 195, 14, 0.26)',
+              }}
+              onDayPress={day => {
+                setSelectedDate(day.dateString);
+                setToggleCalendar(false);
+                if (currentStep === 3) {
+                  setSelectedEventDate(day.dateString);
+                }
+              }}
+            />
+          </CustomModal>
         )}
       </ScrollView>
     </Layout>

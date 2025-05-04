@@ -7,9 +7,44 @@ export const useStore = () => {
   return useContext(StoreContext);
 };
 
+const measurment = [
+  {
+    id: 1,
+    title: 'Gram',
+    selected: true,
+  },
+  {
+    id: 2,
+    title: 'Ounces',
+    selected: false,
+  },
+];
+
+const curr = [
+  {
+    id: 1,
+    title: 'Dollar',
+    selected: true,
+  },
+  {
+    id: 2,
+    title: 'Ruble',
+    selected: false,
+  },
+  {
+    id: 3,
+    title: 'Euro',
+    selected: false,
+  },
+];
+
 export const StoreProvider = ({children}) => {
   const [formData, setFormData] = useState([]);
   const [sales, setSales] = useState([]);
+  const [reminders, setReminders] = useState([]);
+  const [selectedMeasurement, setSelectedMeasurement] = useState(measurment);
+
+  const [currency, setCurrency] = useState(curr);
 
   const saveData = async data => {
     try {
@@ -47,7 +82,7 @@ export const StoreProvider = ({children}) => {
     console.log('remove');
   };
 
-  //--------------sales--------------->
+  // sales
 
   const saveSales = async sale => {
     try {
@@ -86,6 +121,45 @@ export const StoreProvider = ({children}) => {
     console.log('remove');
   };
 
+  // reminders
+
+  const saveReminders = async reminder => {
+    try {
+      const value = await AsyncStorage.getItem('reminders');
+      let parced = value !== null ? JSON.parse(value) : [];
+
+      const reminders = [...parced, reminder];
+      await AsyncStorage.setItem('reminders', JSON.stringify(reminders));
+      console.log('reminders', reminders);
+    } catch (e) {
+      console.error('Failed', e);
+    }
+  };
+
+  const getReminders = async () => {
+    try {
+      const savedData = await AsyncStorage.getItem('reminders');
+      const parsed = JSON.parse(savedData);
+
+      if (parsed != null) {
+        setReminders(parsed);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const removeReminders = async reminder => {
+    const jsonValue = await AsyncStorage.getItem('reminders');
+    let data = jsonValue != null ? JSON.parse(jsonValue) : [];
+    const filtered = data.filter(item => item.id !== reminder);
+    console.log('removed', filtered);
+    setReminders(filtered);
+    await AsyncStorage.setItem('reminders', JSON.stringify(filtered));
+
+    console.log('remove');
+  };
+
   const value = {
     saveData,
     formData,
@@ -95,6 +169,14 @@ export const StoreProvider = ({children}) => {
     getSales,
     removeSale,
     sales,
+    saveReminders,
+    getReminders,
+    removeReminders,
+    reminders,
+    selectedMeasurement,
+    setSelectedMeasurement,
+    currency,
+    setCurrency,
   };
 
   return (

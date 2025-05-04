@@ -10,10 +10,12 @@ import Layout from './Layout';
 import {useStore} from '../store/context';
 import {useNavigation} from '@react-navigation/native';
 import {useState} from 'react';
+import CustomAlert from './CustomAlert';
 
 const SalesCard = ({route}) => {
   const [isDisabled, setIsDisabled] = useState(false);
-  const {removeSale} = useStore();
+  const [showAlert, setShowAlert] = useState(false);
+  const {removeSale, currency} = useStore();
   const navigation = useNavigation();
   const chicken = route.params;
 
@@ -23,7 +25,7 @@ const SalesCard = ({route}) => {
 
     setTimeout(() => {
       navigation.navigate('TabNavigation');
-    }, 400);
+    }, 200);
   };
 
   return (
@@ -60,9 +62,81 @@ const SalesCard = ({route}) => {
 
           <View style={styles.totalEarnedContainer}>
             <Text style={styles.earnedText}>Total earned</Text>
-            <Text style={styles.quantityText}> $1000</Text>
+            {currency.map(item => {
+              if (item.id === 1 && item.selected) {
+                return (
+                  <Text style={styles.quantityText}>
+                    ${chicken.quantity * chicken.price}
+                  </Text>
+                );
+              } else if (item.id === 2 && item.selected) {
+                return (
+                  <Text style={styles.quantityText}>
+                    ₽ {chicken.quantity * chicken.price}
+                  </Text>
+                );
+              } else if (item.id === 3 && item.selected) {
+                return (
+                  <Text style={styles.quantityText}>
+                    € {chicken.quantity * chicken.price}
+                  </Text>
+                );
+              }
+            })}
           </View>
         </View>
+
+        {showAlert && (
+          <CustomAlert>
+            <Text style={styles.alertTitle}>Delete</Text>
+            <Text style={styles.alertSecondaryText}>
+              Are you sure you want to delete this?
+            </Text>
+            <View
+              style={{
+                width: '100%',
+                height: 1,
+                backgroundColor: '#fff',
+              }}></View>
+            <View style={{paddingHorizontal: '20%'}}>
+              <View
+                style={{
+                  justifyContent: 'space-between',
+                  flexDirection: 'row',
+                }}>
+                <TouchableOpacity
+                  activeOpacity={0.7}
+                  onPress={() => handleDeleteSale(chicken.id)}>
+                  <Text
+                    style={[
+                      styles.alertTitle,
+                      {marginTop: 10, marginBottom: 20, marginRight: 25},
+                    ]}>
+                    Yes
+                  </Text>
+                </TouchableOpacity>
+
+                <View
+                  style={{
+                    height: '100%',
+                    width: 1,
+                    backgroundColor: '#fff',
+                  }}></View>
+                <TouchableOpacity
+                  activeOpacity={0.7}
+                  onPress={() => setShowAlert(false)}>
+                  <Text
+                    style={[
+                      styles.alertTitle,
+                      {marginTop: 10, marginBottom: 20},
+                    ]}>
+                    Cancel
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </CustomAlert>
+        )}
       </ScrollView>
       <View style={{alignItems: 'center'}}>
         <View style={styles.deleteBtnWrap}>
@@ -70,7 +144,7 @@ const SalesCard = ({route}) => {
             disabled={isDisabled}
             activeOpacity={0.7}
             style={styles.deleteBtn}
-            onPress={() => handleDeleteSale(chicken.id)}>
+            onPress={() => setShowAlert(true)}>
             <Image source={require('../assets/icons/delete.png')} />
           </TouchableOpacity>
         </View>
@@ -106,6 +180,20 @@ const styles = StyleSheet.create({
     fontWeight: '400',
     color: '#fff',
     marginBottom: 5,
+  },
+  alertTitle: {
+    fontSize: 17,
+    fontWeight: '600',
+    color: '#fff',
+    textAlign: 'center',
+    marginBottom: 10,
+  },
+  alertSecondaryText: {
+    fontSize: 13,
+    fontWeight: '400',
+    color: '#fff',
+    textAlign: 'center',
+    marginBottom: 20,
   },
   descriptionText: {
     fontSize: 16,

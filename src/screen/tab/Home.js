@@ -14,13 +14,23 @@ import {useStore} from '../../store/context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Home = () => {
-  const {getData, formData, removeChicken, sales, getSales, removeSale} =
-    useStore();
+  const {
+    getData,
+    formData,
+    removeChicken,
+    sales,
+    getSales,
+    removeSale,
+    currency,
+  } = useStore();
 
   const navigation = useNavigation();
   const isFocused = useIsFocused();
 
-  // console.log('sales', sales);
+  const totalEarned = sales.reduce((total, sale) => {
+    return total + Number(sale.quantity) * Number(sale.price);
+  }, 0);
+  console.log('totalEarned', totalEarned);
 
   useEffect(() => {
     getData();
@@ -84,7 +94,11 @@ const Home = () => {
                     onPress={() => navigation.navigate('ChickenCard', item)}
                     style={styles.itemContainer}
                     key={item.id}>
-                    <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                    <View
+                      style={{
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                      }}>
                       <Image
                         source={{uri: item.image}}
                         style={{width: 115, height: 115, borderRadius: 99}}
@@ -101,16 +115,30 @@ const Home = () => {
               onPress={() => navigation.navigate('AddChicken')}>
               <Image source={require('../../assets/icons/add.png')} />
             </TouchableOpacity>
+          </View>
+        )}
+        {!emptyData && (
+          <View style={{marginHorizontal: 20, marginBottom: 200}}>
             <View style={{marginHorizontal: 20, marginTop: 105}}>
               <Text style={styles.sectionText}>Add sales</Text>
             </View>
-          </View>
-        )}
-        {emptyData && (
-          <View style={{marginHorizontal: 20, marginBottom: 200}}>
             <View style={styles.totalEarnedContainer}>
               <Text style={styles.earnedText}>Total earned</Text>
-              <Text style={styles.quantityText}> $1000</Text>
+              {currency.map(item => {
+                if (item.id === 1 && item.selected) {
+                  return (
+                    <Text style={styles.quantityText}>${totalEarned}</Text>
+                  );
+                } else if (item.id === 2 && item.selected) {
+                  return (
+                    <Text style={styles.quantityText}>₽{totalEarned}</Text>
+                  );
+                } else if (item.id === 3 && item.selected) {
+                  return (
+                    <Text style={styles.quantityText}>€{totalEarned}</Text>
+                  );
+                }
+              })}
             </View>
 
             <View style={[styles.listContainer, {paddingHorizontal: 0}]}>
@@ -176,6 +204,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     paddingVertical: 27,
     paddingHorizontal: 20,
+
     marginBottom: 10,
     borderRadius: 38,
   },
@@ -216,7 +245,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     position: 'absolute',
-    bottom: 65,
+    bottom: -75,
     right: 20,
   },
   addSalesBtn: {
@@ -228,7 +257,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     position: 'absolute',
     right: 0,
-    bottom: -90,
+    bottom: -80,
   },
   addBtnEmpty: {
     width: 74,

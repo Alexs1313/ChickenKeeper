@@ -33,18 +33,7 @@ const AddSale = () => {
   const navigation = useNavigation();
   const {saveSales} = useStore();
 
-  console.log('state', state);
-
   const handleNextStep = () => {
-    // if (currentStep === 3) {
-    //   saveData(state);
-    // }
-    // if (currentStep === 4) {
-    //   //   saveData(state);
-    //   navigation.navigate('TabNavigation');
-    // } else {
-    //   setCurrentStep(currentStep + 1);
-    // }
     saveSales(state);
 
     setTimeout(() => {
@@ -96,16 +85,15 @@ const AddSale = () => {
                 value={selectedDate}
                 onFocus={() => setToggleCalendar(true)}
                 inputMode="numeric"
+                maxLength={20}
                 placeholder="Sales Date"
                 placeholderTextColor="rgba(60, 60, 67, 0.6)"
-                // onChangeText={value =>
-                //   setState(prev => ({...prev, salesDate: value}))
-                // }
               />
               <TextInput
                 style={styles.input}
                 value={state.quantity}
                 placeholder="Quantity"
+                maxLength={20}
                 inputMode="numeric"
                 placeholderTextColor="rgba(60, 60, 67, 0.6)"
                 onChangeText={value =>
