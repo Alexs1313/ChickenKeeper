@@ -1,14 +1,7 @@
-import {
-  Image,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
-import Layout from '../../components/Layout';
-import {recommendations} from '../../data/recommendations';
+import {Image, ScrollView, StyleSheet, Text, View} from 'react-native';
 
+import {recommendations} from '../../data/recommendations';
+import Layout from '../../components/Layout';
 import RecCard from '../../components/RecCard';
 
 const Rec = () => {

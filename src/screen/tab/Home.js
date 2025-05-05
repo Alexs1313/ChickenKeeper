@@ -8,10 +8,10 @@ import {
   ScrollView,
 } from 'react-native';
 import {Swipeable} from 'react-native-gesture-handler';
-import Layout from '../../components/Layout';
 import {useIsFocused, useNavigation} from '@react-navigation/native';
+
+import Layout from '../../components/Layout';
 import {useStore} from '../../store/context';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Home = () => {
   const {
@@ -30,12 +30,10 @@ const Home = () => {
   const totalEarned = sales.reduce((total, sale) => {
     return total + Number(sale.quantity) * Number(sale.price);
   }, 0);
-  console.log('totalEarned', totalEarned);
 
   useEffect(() => {
     getData();
     getSales();
-    // AsyncStorage.clear();
   }, [isFocused]);
 
   const emptyData = formData.length === 0;
@@ -69,7 +67,8 @@ const Home = () => {
           </Text>
 
           {emptyData && (
-            <View style={{alignItems: 'center', marginTop: 60}}>
+            <View
+              style={{alignItems: 'center', marginTop: 60, marginBottom: 150}}>
               <Image source={require('../../assets/images/emptyHome.png')} />
               <TouchableOpacity
                 activeOpacity={0.7}
@@ -82,63 +81,73 @@ const Home = () => {
 
           {!emptyData && <Text style={styles.sectionText}>Chickens</Text>}
         </View>
-        {!emptyData && (
-          <View>
-            <View style={styles.listContainer}>
-              {formData.map(item => (
-                <Swipeable
-                  renderRightActions={() => deleteChicken(item.id)}
-                  key={item.id}>
-                  <TouchableOpacity
-                    activeOpacity={0.9}
-                    onPress={() => navigation.navigate('ChickenCard', item)}
-                    style={styles.itemContainer}
+        <View>
+          {!emptyData && (
+            <View>
+              <View style={styles.listContainer}>
+                {formData.map(item => (
+                  <Swipeable
+                    renderRightActions={() => deleteChicken(item.id)}
                     key={item.id}>
-                    <View
-                      style={{
-                        flexDirection: 'row',
-                        alignItems: 'center',
-                      }}>
-                      <Image
-                        source={{uri: item.image}}
-                        style={{width: 115, height: 115, borderRadius: 99}}
-                      />
-                      <Text style={styles.itemText}>{item.name}</Text>
-                    </View>
-                  </TouchableOpacity>
-                </Swipeable>
-              ))}
+                    <TouchableOpacity
+                      activeOpacity={0.9}
+                      onPress={() => navigation.navigate('ChickenCard', item)}
+                      style={styles.itemContainer}
+                      key={item.id}>
+                      <View
+                        style={{
+                          flexDirection: 'row',
+                          alignItems: 'center',
+                        }}>
+                        <Image
+                          source={{uri: item.image}}
+                          style={{width: 115, height: 115, borderRadius: 99}}
+                        />
+                        <Text style={styles.itemText}>{item.name}</Text>
+                      </View>
+                    </TouchableOpacity>
+                  </Swipeable>
+                ))}
+              </View>
+              <TouchableOpacity
+                activeOpacity={0.7}
+                style={styles.addBtn}
+                onPress={() => navigation.navigate('AddChicken')}>
+                <Image source={require('../../assets/icons/add.png')} />
+              </TouchableOpacity>
             </View>
-            <TouchableOpacity
-              activeOpacity={0.7}
-              style={styles.addBtn}
-              onPress={() => navigation.navigate('AddChicken')}>
-              <Image source={require('../../assets/icons/add.png')} />
-            </TouchableOpacity>
-          </View>
-        )}
+          )}
+        </View>
         {!emptyData && (
-          <View style={{marginHorizontal: 20, marginBottom: 200}}>
-            <View style={{marginHorizontal: 20, marginTop: 105}}>
-              <Text style={styles.sectionText}>Add sales</Text>
-            </View>
-            <View style={styles.totalEarnedContainer}>
-              <Text style={styles.earnedText}>Total earned</Text>
-              {currency.map(item => {
-                if (item.id === 1 && item.selected) {
-                  return (
-                    <Text style={styles.quantityText}>${totalEarned}</Text>
-                  );
-                } else if (item.id === 2 && item.selected) {
-                  return (
-                    <Text style={styles.quantityText}>₽{totalEarned}</Text>
-                  );
-                } else if (item.id === 3 && item.selected) {
-                  return (
-                    <Text style={styles.quantityText}>€{totalEarned}</Text>
-                  );
-                }
-              })}
+          <View style={{marginBottom: 200}}>
+            <View style={{marginHorizontal: 20}}>
+              <View style={{marginHorizontal: 20, marginTop: 105}}>
+                <Text style={styles.sectionText}>Add sales</Text>
+              </View>
+              <View style={styles.totalEarnedContainer}>
+                <Text style={styles.earnedText}>Total earned</Text>
+                {currency.map(item => {
+                  if (item.id === 1 && item.selected) {
+                    return (
+                      <Text style={styles.quantityText} key={item.id}>
+                        ${totalEarned}
+                      </Text>
+                    );
+                  } else if (item.id === 2 && item.selected) {
+                    return (
+                      <Text style={styles.quantityText} key={item.id}>
+                        ₽{totalEarned}
+                      </Text>
+                    );
+                  } else if (item.id === 3 && item.selected) {
+                    return (
+                      <Text style={styles.quantityText} key={item.id}>
+                        €{totalEarned}
+                      </Text>
+                    );
+                  }
+                })}
+              </View>
             </View>
 
             <View style={[styles.listContainer, {paddingHorizontal: 0}]}>
@@ -195,7 +204,7 @@ const styles = StyleSheet.create({
   },
   listContainer: {
     marginTop: 20,
-    paddingHorizontal: 20,
+    paddingRight: 20,
   },
   list: {
     paddingBottom: 30,
@@ -204,7 +213,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     paddingVertical: 27,
     paddingHorizontal: 20,
-
+    marginLeft: 20,
     marginBottom: 10,
     borderRadius: 38,
   },
@@ -256,7 +265,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     position: 'absolute',
-    right: 0,
+    right: 20,
     bottom: -80,
   },
   addBtnEmpty: {

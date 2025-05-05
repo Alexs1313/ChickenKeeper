@@ -7,16 +7,16 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import {useState} from 'react';
+import {Calendar} from 'react-native-calendars';
+import {useEffect, useState} from 'react';
 import {useNavigation} from '@react-navigation/native';
 import {launchImageLibrary} from 'react-native-image-picker';
-import {useStore} from '../../store/context';
-import {Calendar} from 'react-native-calendars';
 
-import CustomModal from '../../components/CustomModal';
 import Layout from '../../components/Layout';
+import {useStore} from '../../store/context';
+import CustomModal from '../../components/CustomModal';
 
-const AddChicken = () => {
+const EditChicken = ({route}) => {
   const [state, setState] = useState({
     id: Date.now(),
     name: '',
@@ -36,7 +36,14 @@ const AddChicken = () => {
   const [selectedEventDate, setSelectedEventDate] = useState('');
   const [toggleCalendar, setToggleCalendar] = useState(false);
   const navigation = useNavigation();
-  const {saveData} = useStore();
+  const {saveData, removeChicken} = useStore();
+  const chicken = route.params.id;
+
+  useEffect(() => {
+    if (currentStep === 4) {
+      removeChicken(chicken);
+    }
+  }, [currentStep]);
 
   let options = {
     storageOptions: {
@@ -58,10 +65,12 @@ const AddChicken = () => {
   const handleNextStep = () => {
     if (currentStep === 4) {
       saveData(state);
+
       setSelectedDate(''), setSelectedEventDate('');
+
       setTimeout(() => {
         navigation.navigate('TabNavigation');
-      }, 200);
+      }, 300);
     } else {
       setCurrentStep(currentStep + 1);
       setState(prev => ({
@@ -104,7 +113,7 @@ const AddChicken = () => {
                 onPress={() => handlePreviousStep()}>
                 <Image source={require('../../assets/icons/back.png')} />
               </TouchableOpacity>
-              <Text style={styles.headerText}>Add chicken</Text>
+              <Text style={styles.headerText}>Edit chicken</Text>
               <TouchableOpacity
                 onPress={() => handleNextStep()}
                 style={styles.headerBtn}
@@ -212,7 +221,7 @@ const AddChicken = () => {
               />
               <View>
                 <TextInput
-                  style={[styles.input, {paddingLeft: 55}]}
+                  style={[styles.input, {paddingLeft: 55, marginBottom: 40}]}
                   value={selectedDate}
                   inputMode="numeric"
                   onFocus={() => setToggleCalendar(true)}
@@ -335,7 +344,11 @@ const AddChicken = () => {
                 textAlignVertical="top"
                 style={[
                   styles.input,
-                  {height: 115, paddingTop: 20, borderRadius: 40},
+                  {
+                    height: 115,
+                    paddingTop: 20,
+                    borderRadius: 40,
+                  },
                 ]}
                 value={state.notes}
                 maxLength={40}
@@ -357,18 +370,18 @@ const AddChicken = () => {
               hideExtraDays={true}
               theme={{
                 calendarBackground: 'transparent',
-                textSectionTitleColor: '#FFFFFF80',
+                textSectionTitleColor: '#ffffff',
                 selectedDayTextColor: '#ffffff',
-                todayTextColor: '#ffffff',
+                todayTextColor: '#FFC20E',
                 textDisabledColor: '#dd99ee',
                 arrowColor: '#fff',
                 indicatorColor: '#fff',
-                dayTextColor: '#FFFFFF80',
-                monthTextColor: '#FFFFFF',
-                textMonthFontSize: 18,
-                textMonthFontWeight: '600',
-                textDayFontSize: 20,
-                textDayFontWeight: '400',
+                dayTextColor: '#fff',
+                monthTextColor: 'rgba(255, 255, 255, 0.5)',
+                textMonthFontSize: 16,
+                textMonthFontWeight: '700',
+                textDayFontSize: 13,
+                textDayFontWeight: '600',
                 selectedDayBackgroundColor: '#FFC20E',
                 selectedDayTextColor: 'rgba(255, 195, 14, 0.26)',
               }}
@@ -388,6 +401,7 @@ const AddChicken = () => {
 };
 
 const styles = StyleSheet.create({
+  container: {},
   headerText: {
     fontSize: 25,
     fontWeight: '800',
@@ -444,4 +458,4 @@ const styles = StyleSheet.create({
   loadedImg: {width: 192, height: 192, borderRadius: 99},
 });
 
-export default AddChicken;
+export default EditChicken;

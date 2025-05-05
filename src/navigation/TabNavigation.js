@@ -138,9 +138,10 @@ const TabNavigation = () => {
 const styles = StyleSheet.create({
   tabBar: {
     backgroundColor: '#141414',
-    height: 75,
-    paddingBottom: 3,
-    paddingTop: 18,
+    height: 80,
+    elevation: 1,
+    paddingBottom: 18,
+    paddingTop: 20.5,
     position: 'absolute',
     bottom: 39,
     marginHorizontal: 59,
@@ -153,8 +154,8 @@ const styles = StyleSheet.create({
   },
   bgIcon: {
     backgroundColor: 'transparent',
-    width: 65,
-    height: 65,
+    width: 69,
+    height: 69,
     borderRadius: 99,
     justifyContent: 'center',
     alignItems: 'center',

@@ -6,18 +6,17 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import Layout from '../../components/Layout';
+
 import {useEffect} from 'react';
 import {useNavigation} from '@react-navigation/native';
-
-import {useStore} from '../../store/context';
 import {Swipeable} from 'react-native-gesture-handler';
+
+import Layout from '../../components/Layout';
+import {useStore} from '../../store/context';
 
 const RemindersHistory = () => {
   const navigation = useNavigation();
   const {reminders, getReminders, removeReminders} = useStore();
-
-  console.log('reminders', reminders);
 
   useEffect(() => {
     getReminders();
@@ -62,12 +61,12 @@ const RemindersHistory = () => {
               </Text>
             </View>
           ) : (
-            <View style={{marginHorizontal: 20, marginTop: 10}}>
+            <View style={{marginTop: 10}}>
               <View style={{alignItems: 'center', marginBottom: 20}}>
                 <Image source={require('../../assets/images/reminder.png')} />
               </View>
 
-              <View>
+              <View style={{paddingRight: 20, marginBottom: 20}}>
                 {reminders.map(reminder => (
                   <Swipeable
                     renderRightActions={() => deleteReminder(reminder.id)}
@@ -123,11 +122,9 @@ const styles = StyleSheet.create({
   reminderContainer: {
     backgroundColor: '#fff',
     borderRadius: 181,
-    paddingLeft: 20,
-    paddingRight: 20,
+    marginLeft: 20,
+    paddingHorizontal: 20,
     paddingVertical: 10,
-    justifyContent: 'center',
-    width: '100%',
     marginBottom: 5,
   },
   selectTypeText: {

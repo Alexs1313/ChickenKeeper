@@ -43,8 +43,10 @@ export const StoreProvider = ({children}) => {
   const [sales, setSales] = useState([]);
   const [reminders, setReminders] = useState([]);
   const [selectedMeasurement, setSelectedMeasurement] = useState(measurment);
-
   const [currency, setCurrency] = useState(curr);
+  const [isEnabled, setIsEnabled] = useState(false);
+
+  console.log('formdata', formData);
 
   const saveData = async data => {
     try {
@@ -71,11 +73,11 @@ export const StoreProvider = ({children}) => {
     }
   };
 
-  const removeChicken = async chicken => {
+  const removeChicken = async selectedChicken => {
     const jsonValue = await AsyncStorage.getItem('formData');
     let data = jsonValue != null ? JSON.parse(jsonValue) : [];
-    const filtered = data.filter(item => item.id !== chicken);
-    console.log('removedChick', filtered);
+    const filtered = data.filter(item => item.id !== selectedChicken);
+
     setFormData(filtered);
     await AsyncStorage.setItem('formData', JSON.stringify(filtered));
 
@@ -177,6 +179,8 @@ export const StoreProvider = ({children}) => {
     setSelectedMeasurement,
     currency,
     setCurrency,
+    isEnabled,
+    setIsEnabled,
   };
 
   return (

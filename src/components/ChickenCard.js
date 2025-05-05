@@ -6,10 +6,11 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import Layout from './Layout';
-import {useStore} from '../store/context';
 import {useNavigation} from '@react-navigation/native';
 import {useState} from 'react';
+
+import Layout from './Layout';
+import {useStore} from '../store/context';
 import CustomAlert from './CustomAlert';
 
 const ChickenCard = ({route}) => {
@@ -18,7 +19,6 @@ const ChickenCard = ({route}) => {
   const navigation = useNavigation();
   const [showAlert, setShowAlert] = useState(false);
   const chicken = route.params;
-  console.log('item', chicken);
 
   const handleDeleteChicken = chicken => {
     removeChicken(chicken);
@@ -40,7 +40,7 @@ const ChickenCard = ({route}) => {
             <Image source={require('../assets/icons/back.png')} />
           </TouchableOpacity>
           <TouchableOpacity
-            onPress={() => handleNextStep()}
+            onPress={() => navigation.navigate('EditChicken', chicken)}
             style={styles.headerBtn}
             activeOpacity={0.7}>
             <Image source={require('../assets/icons/pen.png')} />
@@ -65,12 +65,6 @@ const ChickenCard = ({route}) => {
               alignItems: 'center',
             }}>
             <Text style={styles.sectionText}>Egg accounting</Text>
-            <TouchableOpacity activeOpacity={0.7} style={styles.headerBtn}>
-              <Image
-                source={require('../assets/icons/add.png')}
-                style={{width: 25, height: 25}}
-              />
-            </TouchableOpacity>
           </View>
 
           <View style={styles.sectionContainer}>
@@ -89,12 +83,6 @@ const ChickenCard = ({route}) => {
               alignItems: 'center',
             }}>
             <Text style={styles.sectionText}>Events</Text>
-            <TouchableOpacity activeOpacity={0.7} style={styles.headerBtn}>
-              <Image
-                source={require('../assets/icons/add.png')}
-                style={{width: 25, height: 25}}
-              />
-            </TouchableOpacity>
           </View>
 
           <View style={styles.sectionContainer}>
@@ -119,12 +107,6 @@ const ChickenCard = ({route}) => {
               alignItems: 'center',
             }}>
             <Text style={styles.sectionText}>Notes on Chicken Status</Text>
-            <TouchableOpacity activeOpacity={0.7} style={styles.headerBtn}>
-              <Image
-                source={require('../assets/icons/add.png')}
-                style={{width: 25, height: 25}}
-              />
-            </TouchableOpacity>
           </View>
 
           <View style={styles.sectionContainer}>

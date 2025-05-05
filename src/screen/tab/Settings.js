@@ -7,15 +7,12 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import Layout from '../../components/Layout';
 import {useEffect, useState} from 'react';
-import {useNavigation} from '@react-navigation/native';
 
+import Layout from '../../components/Layout';
 import {useStore} from '../../store/context';
-import {Swipeable} from 'react-native-gesture-handler';
 
 const Settings = () => {
-  const navigation = useNavigation();
   const {
     getReminders,
     removeReminders,
@@ -23,10 +20,11 @@ const Settings = () => {
     setSelectedMeasurement,
     currency,
     setCurrency,
+    setIsEnabled,
+    isEnabled,
   } = useStore();
   const [showMeasurement, setShowMeasurement] = useState(false);
   const [showCurrency, setShowCurrency] = useState(false);
-  const [isEnabled, setIsEnabled] = useState(false);
 
   const toggleSwitch = () => setIsEnabled(previousState => !previousState);
 
@@ -67,16 +65,6 @@ const Settings = () => {
     setCurrency(checked);
     setShowCurrency(false);
   };
-
-  const deleteReminder = itemId => (
-    <View style={{justifyContent: 'center'}}>
-      <TouchableOpacity
-        style={styles.deleteButton}
-        onPress={() => removeReminders(itemId)}>
-        <Image source={require('../../assets/icons/delete.png')} />
-      </TouchableOpacity>
-    </View>
-  );
 
   return (
     <Layout>
@@ -205,11 +193,12 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     color: '#fff',
   },
-  notificationText: {fontSize: 16, fontWeight: '700', color: '#000'},
-  emptyRemindersImage: {
-    width: 230,
-    height: 230,
+  notificationText: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#000',
   },
+
   headerContainer: {
     marginHorizontal: 20,
     marginTop: 80,
@@ -223,27 +212,9 @@ const styles = StyleSheet.create({
     width: '100%',
     padding: 20,
     backgroundColor: '#fff',
-  },
-  headerBtn: {
-    width: 43,
-    height: 43,
-    backgroundColor: '#fff',
-    borderRadius: 99,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: '15%',
+    marginBottom: 150,
   },
 
-  reminderContainer: {
-    backgroundColor: '#fff',
-    borderRadius: 181,
-    paddingLeft: 20,
-    paddingRight: 20,
-    paddingVertical: 10,
-    justifyContent: 'center',
-    width: '100%',
-    marginBottom: 5,
-  },
   selectTypeText: {
     fontSize: 16,
     fontWeight: '700',
@@ -254,15 +225,6 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: '#fff',
     marginRight: 8,
-  },
-  deleteButton: {
-    backgroundColor: 'red',
-    justifyContent: 'center',
-    alignItems: 'center',
-    width: 50,
-    height: 50,
-    borderRadius: 7,
-    marginLeft: 10,
   },
 });
 

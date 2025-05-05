@@ -1,6 +1,6 @@
 import {View, StyleSheet, TouchableOpacity, Image} from 'react-native';
-
 import {useNavigation} from '@react-navigation/native';
+
 import Layout from '../../components/Layout';
 
 const Welcome = () => {

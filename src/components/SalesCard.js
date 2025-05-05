@@ -6,10 +6,11 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import Layout from './Layout';
 import {useStore} from '../store/context';
 import {useNavigation} from '@react-navigation/native';
 import {useState} from 'react';
+
+import Layout from './Layout';
 import CustomAlert from './CustomAlert';
 
 const SalesCard = ({route}) => {
@@ -39,7 +40,7 @@ const SalesCard = ({route}) => {
             <Image source={require('../assets/icons/back.png')} />
           </TouchableOpacity>
           <TouchableOpacity
-            onPress={() => handleNextStep()}
+            onPress={() => navigation.navigate('EditSale', chicken)}
             style={styles.headerBtn}
             activeOpacity={0.7}>
             <Image source={require('../assets/icons/pen.png')} />
@@ -65,19 +66,19 @@ const SalesCard = ({route}) => {
             {currency.map(item => {
               if (item.id === 1 && item.selected) {
                 return (
-                  <Text style={styles.quantityText}>
+                  <Text style={styles.quantityText} key={item.id}>
                     ${chicken.quantity * chicken.price}
                   </Text>
                 );
               } else if (item.id === 2 && item.selected) {
                 return (
-                  <Text style={styles.quantityText}>
+                  <Text style={styles.quantityText} key={item.id}>
                     ₽ {chicken.quantity * chicken.price}
                   </Text>
                 );
               } else if (item.id === 3 && item.selected) {
                 return (
-                  <Text style={styles.quantityText}>
+                  <Text style={styles.quantityText} key={item.id}>
                     € {chicken.quantity * chicken.price}
                   </Text>
                 );
@@ -164,6 +165,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+    marginBottom: 150,
   },
   earnedText: {fontSize: 18, color: '#fff', fontWeight: '500', opacity: 0.7},
   quantityText: {fontSize: 40, color: '#fff', fontWeight: '500'},

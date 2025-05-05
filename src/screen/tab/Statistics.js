@@ -8,45 +8,25 @@ import {
   TouchableOpacity,
   Image,
   TextInput,
+  Alert,
 } from 'react-native';
 import {LineChart} from 'react-native-chart-kit';
-import Layout from '../../components/Layout';
 import LinearGradient from 'react-native-linear-gradient';
-import CustomModal from '../../components/CustomModal';
 import {Calendar} from 'react-native-calendars';
 import {useStore} from '../../store/context';
 import {useNavigation} from '@react-navigation/native';
 
+import CustomModal from '../../components/CustomModal';
+import Layout from '../../components/Layout';
+import Toast from 'react-native-toast-message';
+
 const Statistics = () => {
-  const [statsStep, setStatsStep] = useState(1);
   const [selecdedId, setSelectedId] = useState(1);
-
   const [state, setState] = useState({id: Date.now(), type: '', date: ''});
-  const {saveReminders, reminders, sales} = useStore();
+  const {saveReminders, sales, isEnabled} = useStore();
   const navigation = useNavigation();
-  const today = new Date();
-  const formattedDate = today.toISOString().slice(0, 10);
-
   const [selectedDate, setSelectedDate] = useState('');
   const [toggleCalendar, setToggleCalendar] = useState(false);
-
-  const [dateInput, setDateInput] = useState('');
-  const [dayOfWeek, setDayOfWeek] = useState('');
-
-  console.log('dateInput', dateInput);
-  console.log('dayOfWeek', dayOfWeek);
-
-  const findDate = sales.filter(sale => sale.salesDate === formattedDate);
-  console.log('object', findDate);
-
-  // function getWeekDay(date) {
-  //   let days = ['ВС', 'ПН', 'ВТ', 'СР', 'ЧТ', 'ПТ', 'СБ'];
-  //   days[date.getDay()];
-  //   setDayOfWeek(dayName);
-  // }
-
-  // let date = new Date(formattedDate);
-  // alert(getWeekDay(date));
 
   const totalEggsQuantity = sales
     .filter(sale => sale.type === 'Eggs')
@@ -54,11 +34,13 @@ const Statistics = () => {
       return total + Number(sale.quantity);
     }, 0);
 
-  const totalEggsQuantityByDay = sales
-    .filter(sale => sale.salesDate === formattedDate)
-    .reduce((total, sale) => {
-      return total + Number(sale.quantity);
-    }, 0);
+  var d = new Date();
+  var n = d.getDay();
+
+  const dataArr = [0, 0, 0, 0, 0, 0];
+  const filtered = dataArr.splice(n - 1, 0, totalEggsQuantity);
+
+  console.log(filtered);
 
   const selectScreen = [
     {
@@ -84,19 +66,25 @@ const Statistics = () => {
     }));
   }, [toggleCalendar]);
 
+  const isDisabled =
+    state.selectedDate === '' || state.type === '' || state.date === '';
+
   const handleSaveReminder = () => {
     saveReminders(state);
     setSelectedDate('');
-    setState('');
+    setState({...state, type: '', date: ''});
+    if (isEnabled) {
+      Toast.show({
+        text1: 'Reminder created successfully!',
+      });
+    }
   };
-
-  const isDisabled = state.date === '' || state.type === '';
 
   return (
     <Layout>
       <ScrollView>
         <View style={styles.headerContainer}>
-          <Text style={styles.headerText}>Recommendations</Text>
+          <Text style={styles.headerText}>Statistics and Reminders</Text>
         </View>
         <View style={{marginHorizontal: 20}}>
           <Text style={styles.sectionText}>Egg Production</Text>
@@ -157,7 +145,7 @@ const Statistics = () => {
                   labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
                   datasets: [
                     {
-                      data: [0, 34, 34, 34, 55, 60],
+                      data: dataArr,
                     },
                   ],
                 }}
@@ -207,7 +195,7 @@ const Statistics = () => {
                   labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'],
                   datasets: [
                     {
-                      data: [0, 34, 34, 34, 55, 60],
+                      data: [0, 0, 0, totalEggsQuantity, 0, 0],
                     },
                   ],
                 }}
@@ -300,7 +288,8 @@ const Statistics = () => {
               </View>
             </View>
           </View>
-          <View style={{alignItems: 'flex-end', marginTop: 10}}>
+          <View
+            style={{alignItems: 'flex-end', marginTop: 10, marginBottom: 150}}>
             <TouchableOpacity
               disabled={isDisabled}
               onPress={() => handleSaveReminder()}
@@ -323,18 +312,18 @@ const Statistics = () => {
               hideExtraDays={true}
               theme={{
                 calendarBackground: 'transparent',
-                textSectionTitleColor: '#ffffff',
+                textSectionTitleColor: '#FFFFFF80',
                 selectedDayTextColor: '#ffffff',
-                todayTextColor: '#FFC20E',
+                todayTextColor: '#ffffff',
                 textDisabledColor: '#dd99ee',
                 arrowColor: '#fff',
                 indicatorColor: '#fff',
-                dayTextColor: '#fff',
-                monthTextColor: 'rgba(255, 255, 255, 0.5)',
-                textMonthFontSize: 16,
-                textMonthFontWeight: '700',
-                textDayFontSize: 13,
-                textDayFontWeight: '600',
+                dayTextColor: '#FFFFFF80',
+                monthTextColor: '#FFFFFF',
+                textMonthFontSize: 18,
+                textMonthFontWeight: '600',
+                textDayFontSize: 20,
+                textDayFontWeight: '400',
                 selectedDayBackgroundColor: '#FFC20E',
                 selectedDayTextColor: 'rgba(255, 195, 14, 0.26)',
               }}

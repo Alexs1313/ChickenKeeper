@@ -10,12 +10,13 @@ import {
 import {useState} from 'react';
 import {useNavigation} from '@react-navigation/native';
 import {Calendar} from 'react-native-calendars';
-
 import {useStore} from '../../store/context';
-import CustomModal from '../../components/CustomModal';
-import Layout from '../../components/Layout';
 
-const AddSale = () => {
+import Layout from '../../components/Layout';
+import CustomModal from '../../components/CustomModal';
+import {MouseButton} from 'react-native-gesture-handler';
+
+const EditSale = ({route}) => {
   const [state, setState] = useState({
     id: Date.now(),
     salesDate: '',
@@ -26,13 +27,14 @@ const AddSale = () => {
   const [currentStep, setCurrentStep] = useState(1);
   const [selectedDate, setSelectedDate] = useState('');
   const [toggleCalendar, setToggleCalendar] = useState(false);
+  const sale = route.params;
 
   const navigation = useNavigation();
-  const {saveSales} = useStore();
+  const {saveSales, removeSale} = useStore();
 
-  const handleNextStep = () => {
+  const handleNextStep = sale => {
     saveSales(state);
-
+    removeSale(sale.id);
     setTimeout(() => {
       navigation.navigate('TabNavigation');
     }, 200);
@@ -62,10 +64,10 @@ const AddSale = () => {
               onPress={() => handlePreviousStep()}>
               <Image source={require('../../assets/icons/back.png')} />
             </TouchableOpacity>
-            <Text style={styles.headerText}>Add sales</Text>
+            <Text style={styles.headerText}>Edit sales</Text>
             <TouchableOpacity
               disabled={isDisabled}
-              onPress={() => handleNextStep()}
+              onPress={() => handleNextStep(sale)}
               style={styles.headerBtn}
               activeOpacity={0.7}>
               <Image
@@ -114,7 +116,7 @@ const AddSale = () => {
             </View>
           </View>
 
-          <View style={{marginHorizontal: 20}}>
+          <View style={{marginHorizontal: 20, marginBottom: 30}}>
             <Text style={styles.sectionText}>Product type</Text>
 
             <TouchableOpacity
@@ -163,18 +165,18 @@ const AddSale = () => {
               hideExtraDays={true}
               theme={{
                 calendarBackground: 'transparent',
-                textSectionTitleColor: '#FFFFFF80',
+                textSectionTitleColor: '#ffffff',
                 selectedDayTextColor: '#ffffff',
-                todayTextColor: '#ffffff',
+                todayTextColor: '#FFC20E',
                 textDisabledColor: '#dd99ee',
                 arrowColor: '#fff',
                 indicatorColor: '#fff',
-                dayTextColor: '#FFFFFF80',
-                monthTextColor: '#FFFFFF',
-                textMonthFontSize: 18,
-                textMonthFontWeight: '600',
-                textDayFontSize: 20,
-                textDayFontWeight: '400',
+                dayTextColor: '#fff',
+                monthTextColor: 'rgba(255, 255, 255, 0.5)',
+                textMonthFontSize: 16,
+                textMonthFontWeight: '700',
+                textDayFontSize: 13,
+                textDayFontWeight: '600',
                 selectedDayBackgroundColor: '#FFC20E',
                 selectedDayTextColor: 'rgba(255, 195, 14, 0.26)',
               }}
@@ -264,4 +266,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default AddSale;
+export default EditSale;
